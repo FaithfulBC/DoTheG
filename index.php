@@ -7,7 +7,7 @@ $app = new \Slim\Slim();
 // GET route
 $app->get('/hello/:name/:name2', function ($name, $name2) {
     echo "Hello, $name, $name2";
-});
+});//test
 // POST route
 $app->post('/post', function () {
 	$var1 = $app->request()->params('f1');
