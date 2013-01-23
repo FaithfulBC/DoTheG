@@ -4,7 +4,7 @@ require 'Slim/Slim.php';
 \Slim\Slim::registerAutoloader();
 
 $app = new \Slim\Slim();
-
+// GET route
 $app->get('/hello/:name/:name2', function ($name, $name2) {
     echo "Hello, $name, $name2";
 });
