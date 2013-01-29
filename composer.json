@@ -1,5 +1,16 @@
 {
+	"name": "DoTheG Rank server",
+	"description": "Rank server for DotheG game using restful service in slimframework",
+	"version": "0.1.0",
+	"author": "FaithfulBC <shinup222@naver.com>",
+	"keywords": ["rank", "rank server"],
+    "repository": {
+    	"tpye": "git",
+    	"url": "https://github.com/FaithfulBC/DoTheG.git"
+    },
+    "main": "index",
+    "engines": {"apache": "2.2"},
     "require": {
-        "slim/slim": "2.*"
-    }
+		"slim/slim": "2.*"
+	}
 }
