@@ -6,6 +6,7 @@ require 'Slim/Slim.php';//include slimframework
 
 $app = new \Slim\Slim();
 //(is User)function is not required. it will be solved in the local storage.
+$app->get('/isUser/:id','isUser');//is there ID(user) in database
 $app->put('/upt_latest_date/:id','updateLatestDate');//update lastest date
 $app->post('/add_User','addUser');//add User (Records are initialized 0)
 $app->get('/dep_Rank/:id','getDepthRank');//dep_rank
@@ -15,6 +16,21 @@ $app->delete('/del_Rank:id', 'deleteRecord');//delete_record
 
 $app->run();
 
+function isUser($id){
+	$sql = "select * from ranking where id=:id";
+	try{
+		$db = getConnection();
+		$stmt = $db->prepare($sql);
+		$stmt->bindParam("id", $id);
+		$stmt->execute();
+		$record = $stmt->fetchObject();
+		$db = null;
+		echo json_encode($record);
+	}
+	catch(PDOException $e){
+		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
+	}
+}
 function updateLatestDate($id){
 	$sql = "update ranking set latest_date=now() where id=:id";
 	try{
@@ -71,7 +87,14 @@ function updateRecord(){
 	$record = json_decode($body);
 	$sql = "update ranking set Depth=:Depth, Score=:Score where id=:id";
 	try{
-		
+		$db = getConnection();
+		$stmt = $db->prepare($sql);
+		$stmt->bindParam("Depth", $record->Depth);
+		$stmt->bindParam("Score", $record->Score);
+		$stmt->bindParam("id", $record->id);
+		$stmt->execute();
+		$db = null;
+		echo json_encode($record);//or echo success data(for response ex.true)
 	}
 	catch(PDOException $e){
 		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
