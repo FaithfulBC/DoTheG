@@ -17,15 +17,27 @@ $app->delete('/del_Rank:id', 'deleteRecord');//delete_record
 $app->run();
 
 function isUser($id){
-	$sql = "select * from ranking where id=:id";
+	$sql = "select count(*) from ranking where id=:id";
+	$sql1 = "select * from ranking where id=:id";
 	try{
 		$db = getConnection();
 		$stmt = $db->prepare($sql);
 		$stmt->bindParam("id", $id);
 		$stmt->execute();
-		$record = $stmt->fetchObject();
-		$db = null;
-		echo json_encode($record);
+		$count = $stmt->fetchObject();
+		if($count == 0){
+			$db = null;
+			$message = array('user'=>'empty','mode'=>'sign_up_user');
+			echo json_encode($message);//go to sign up page
+		}
+		else{//count == 1
+			$stmt2 = $db->prepare($sql1);
+			$stmt2->bindParam("id", $id);
+			$stmt2->execute();
+			$record = $stmt2->fetchObject();
+			$db = null;
+			echo json_encode($record);//update local storage record
+		}
 	}
 	catch(PDOException $e){
 		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
