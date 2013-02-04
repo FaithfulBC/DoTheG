@@ -55,11 +55,29 @@ function getDepthRank($id){//my rank함수를 따로 만들까?
 	try{
 		$db = getConnection();
 		$stmt = $db->query($sql1);
-		
+		//미완성
 		
 	}
 	catch(PDOException $e){
 		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
 	}
+}
+function getScoreRank($id){
+	
+}
+function updateRecord(){
+	$request = $app->request();
+	$body = $request->getBody();
+	$record = json_decode($body);
+	$sql = "update ranking set Depth=:Depth, Score=:Score where id=:id";
+	try{
+		
+	}
+	catch(PDOException $e){
+		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
+	}
+}
+function deleteRecord($id){
+	
 }
 ?>
