@@ -1,5 +1,5 @@
 <?php
-require_once 'dbconn.php';
+require_once 'dbconn.php';//dbconnect function
 require 'Slim/Slim.php';//include slimframework
 
 \Slim\Slim::registerAutoloader();
@@ -29,7 +29,7 @@ function test_f($id){
 		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
 	}
 }
-function isUser($id){
+function isUser($id){//complete
 	$sql = "select count(*) from ranking where id=:id";
 	$sql1 = "select * from ranking where id=:id";
 	try{
@@ -38,12 +38,14 @@ function isUser($id){
 		$stmt->bindParam("id", $id);
 		$stmt->execute();
 		$count = $stmt->fetchObject();
-		if($count == 0){
+		$count = json_encode($count);//stdClass object를 array로 변형하는 과정
+		$count = json_decode($count,true);//변형 끝
+		if($count['count(*)'] == 0){
 			$db = null;
 			$message = array('user'=>'empty','mode'=>'sign_up_user');
 			echo json_encode($message);//go to sign up page
 		}
-		else{//count == 1
+		else if($count['count(*)'] == 1){//count == 1
 			$stmt2 = $db->prepare($sql1);
 			$stmt2->bindParam("id", $id);
 			$stmt2->execute();
