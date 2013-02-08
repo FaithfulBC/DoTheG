@@ -5,7 +5,7 @@ require 'Slim/Slim.php';//include slimframework
 \Slim\Slim::registerAutoloader();
 
 $app = new \Slim\Slim();
-//(is User)function is not required. it will be solved in the local storage.
+
 $app->get('/isUser/:id','isUser');//is there ID(user) in database
 $app->put('/upt_latest_date/:id','updateLatestDate');//update lastest date
 $app->post('/add_User','addUser');//add User (Records are initialized 0)
