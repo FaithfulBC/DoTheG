@@ -1,5 +1,5 @@
 <?php
-require 'dbconn.php';//db connect function
+require_once 'dbconn.php';
 require 'Slim/Slim.php';//include slimframework
 
 \Slim\Slim::registerAutoloader();
@@ -13,9 +13,22 @@ $app->get('/dep_Rank/:id','getDepthRank');//dep_rank
 $app->get('/score_Rank/:id','getScoreRank');//score_rank
 $app->put('/upt_Record/:id','updateRecord');//update_record
 $app->delete('/del_Rank:id', 'deleteRecord');//delete_record
+$app->get('/test/:id', 'test_f');//db connection test
 
 $app->run();
-
+function test_f($id){
+	$sql = "select * from ranking";
+	try{
+		$db = getConnection();
+		$stmt = $db->query($sql);
+		$record = $stmt->fetchAll(PDO::FETCH_OBJ);
+		$db = null;
+		echo json_encode($record);
+	}
+	catch(PDOException $e){
+		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
+	}
+}
 function isUser($id){
 	$sql = "select count(*) from ranking where id=:id";
 	$sql1 = "select * from ranking where id=:id";
@@ -92,6 +105,14 @@ function getDepthRank($id){//my rank함수를 따로 만들까?
 }
 function getScoreRank($id){
 	
+	try{
+		$db = getConnection();
+		
+		
+	}
+	catch(PDOException $e){
+		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
+	}
 }
 function updateRecord(){
 	$request = $app->request();
