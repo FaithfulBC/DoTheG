@@ -143,7 +143,7 @@ function getScoreRank($id){
 		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
 	}
 }
-function updateRecord(){
+function updateRecord($id){
 	$request = $app->request();
 	$body = $request->getBody();
 	$record = json_decode($body);
