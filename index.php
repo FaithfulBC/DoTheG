@@ -58,15 +58,20 @@ function isUser($id){//complete
 		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
 	}
 }
-function updateLatestDate($id){
+function updateLatestDate($id){//isUser 요청 완료 후  updateLatestDate 요청하기
 	$sql = "update ranking set latest_date=now() where id=:id";
+	$sql2 = "select latest_date from ranking where id=:id";
 	try{
 		$db = getConnection();//db connection
 		$stmt = $db->prepare($sql);
 		$stmt->bindParam("id", $id);
 		$stmt->execute();//query execute
+		$stmt2 = $db->prepare($sql2);
+		$stmt2->bindParam("id", $id);
+		$stmt2->execute();
+		$time = $stmt2->fetchObject();
 		$db = null;//db disconnection
-		//echo success data(for response ex. true)
+		echo json_encode($time);//echo success data(time) if invalid id data = 'false'
 	}
 	catch(PDOException $e){
 		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
@@ -85,7 +90,7 @@ function addUser(){
 		$stmt->bindParam("Dev_num", $record->Dev_num);
 		$stmt->execute();
 		$db = null;
-		//echo success data(for response ex.true)
+		echo json_encode($record);//echo success data(for response ex.true)
 	}
 	catch(PDOException $e){
 		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
