@@ -163,6 +163,6 @@ function updateRecord($id){
 	}
 }
 function deleteRecord($id){
-	
+	//미완성
 }
 ?>
