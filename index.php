@@ -133,11 +133,31 @@ function getDepthRank($id){
 	}
 }
 function getScoreRank($id){
-	
+	$sql1 = "select * from ranking order by Score desc limit 5";
+	$sql2 = "select * from ranking where id=:id";
+	$sql3 = "select count(*) from ranking where Score>:Score";
 	try{
 		$db = getConnection();
-		
-		
+		$stmt = $db->query($sql1);//sql1 start
+		$record1_5 = $stmt->fetchAll(PDO::FETCH_OBJ);
+		$record1_5 = json_encode($record1_5);//배열화
+		$record1_5 = json_decode($record1_5,true);//배열화 완료
+		$stmt2 = $db->prepare($sql2);//sql2 start
+		$stmt2->bindParam("id", $id);
+		$stmt2->execute();
+		$myRecord = $stmt2->fetchObject();
+		$myRecord = json_encode($myRecord);//배열화
+		$myRecord = json_decode($myRecord,true);//배열화 완료
+		$Score_record = $myRecord['Score'];//Score 값 가져오기
+		$stmt3 = $db->prepare($sql3);//sql3 start
+		$stmt3->bindParam("Score", $Score_record);
+		$stmt3->execute();
+		$myRank_temp = $stmt3->fetchObject();
+		$myRank_temp = json_encode($myRank_temp);//배열화
+		$myRank_temp = json_decode($myRank_temp,true);//배열화 완료
+		$myRank = $myRank_temp['count(*)']+1;//랭크값
+		$result = array('top5'=>$record1_5, 'myrank'=>$myRank, 'myrecord'=>$myRecord);//배열만들기
+		echo json_encode($result);
 	}
 	catch(PDOException $e){
 		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
