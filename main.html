@@ -18,16 +18,41 @@
 		<input type="submit" value="전송">
 	</form>
   	<span>post 전송 test</span>
-	<form action="index.php/add_User" method= "post">
 		<div><input type="text" id="id" size="15" /></div>
 		<div><input type="text" id="name" size="15" /></div>
 		<div><input type="text" id="Dev_num" size="15" /></div>
 		<div><input type="text" id="Depth" size="15" /></div>
-		<div><input type="text" id="Scord" size="15" /></div>
-		<input type="submit" value="전송">
-	</form>
+		<div><input type="text" id="Score" size="15" /></div>
+		<input type="button" value="전송" onclick="javascript:add_User_function()">
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 	<script>
-		
+		function add_User_form_Json() {
+			return JSON.stringify({
+				"id": $('#id').val(),
+				"name": $('#name').val(),
+				"Dev_num": $('#Dev_num').val(),
+				"Depth": $('#Depth').val(),
+				"Score": $('#Score').val(),
+				});
+		}
+		function add_User_function() {
+			console.log('add_User');
+			$.ajax({
+				type: 'POST',
+				contentType: 'application/json',
+				url: index.php/add_user,
+				dataType: "json",
+				data: add_User_form_Json(),
+				success: function(data, textStatus, jqXHR){
+					alert('User created successfully');
+					$('#btnDelete').show();
+					$('#userId').val(data.id);
+		        },
+		        error: function(jqXHR, textStatus, errorThrown){
+					alert('addWine error: ' + textStatus);
+				}
+			});
+		}
 	</script>
 </body>
 </html>
