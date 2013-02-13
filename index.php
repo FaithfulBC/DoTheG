@@ -183,6 +183,18 @@ function updateRecord($id){
 	}
 }
 function deleteRecord($id){
-	//미완성//
+	$sql = "delete from ranking where id=:id";
+	try{
+		$db = getConnection();
+		$stmt = $db ->prepare($sql);
+		$stmt->bindParam("id", $id);
+		$stmt->execute();
+		$db = null;
+		$message = array('result'=>'delete', 'id'=>$id);
+		echo json_encode($message);
+	}
+	catch(PDOException $e){
+		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
+	}
 }
 ?>
