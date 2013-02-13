@@ -40,7 +40,7 @@
 			$.ajax({
 				type: 'POST',
 				contentType: 'application/json',
-				url: index.php/add_user,
+				url: index.php + '/add_user',
 				dataType: "json",
 				data: add_User_form_Json(),
 				success: function(data, textStatus, jqXHR){
