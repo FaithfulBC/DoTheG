@@ -6,24 +6,29 @@ require 'Slim/Slim.php';//include slimframework
 
 $app = new \Slim\Slim();
 
-$app->get('/isUser/:id','isUser');//is there ID(user) in database
+$app->get('/is_user/:id','isUser');//is there ID(user) in database
 $app->put('/upt_latest_date/:id','updateLatestDate');//update lastest date
-$app->post('/add_User','addUser');//add User (Records are initialized 0)
-$app->get('/dep_Rank/:id','getDepthRank');//dep_rank
-$app->get('/score_Rank/:id','getScoreRank');//score_rank
-$app->put('/upt_Record/:id','updateRecord');//update_record
-$app->delete('/del_Rank:id', 'deleteRecord');//delete_record
+$app->post('/add_user','addUser');//add User (Records are initialized 0)
+$app->get('/dep_rank/:id','getDepthRank');//dep_rank
+$app->get('/score_rank/:id','getScoreRank');//score_rank
+$app->put('/upt_record/:id','updateRecord');//update_record
+$app->delete('/del_rank:id', 'deleteRecord');//delete_record
 $app->get('/test/:id', 'test_f');//db connection test
 
 $app->run();
 function test_f($id){
-	$sql = "select * from ranking";
+	$sql = "select * from ranking where id=:id";
 	try{
 		$db = getConnection();
-		$stmt = $db->query($sql);
-		$record = $stmt->fetchAll(PDO::FETCH_OBJ);
+		$stmt = $db->prepare($sql);
+		$stmt->bindParam("id", $id);
+		$stmt->execute();
+		$myRecord = $stmt->fetchObject();
 		$db = null;
-		echo json_encode($record);
+		print_r($myRecord);
+		$myRecord = json_encode($myRecord);
+		$myRecord = json_decode($myRecord,true);
+		echo json_encode($myRecord);
 	}
 	catch(PDOException $e){
 		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
@@ -96,15 +101,32 @@ function addUser(){
 		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
 	}
 }
-function getDepthRank($id){//my rank함수를 따로 만들까?
+function getDepthRank($id){
 	$sql1 = "select * from ranking order by Depth desc limit 5";
 	$sql2 = "select * from ranking where id=:id";
 	$sql3 = "select count(*) from ranking where Depth>:Depth";
 	try{
 		$db = getConnection();
-		$stmt = $db->query($sql1);
-		//미완성
-		
+		$stmt = $db->query($sql1);//sql1 start
+		$record1_5 = $stmt->fetchAll(PDO::FETCH_OBJ);
+		$record1_5 = json_encode($record1_5);//배열화
+		$record1_5 = json_decode($record1_5,true);//배열화 완료
+		$stmt2 = $db->prepare($sql2);//sql2 start
+		$stmt2->bindParam("id", $id);
+		$stmt2->execute();
+		$myRecord = $stmt2->fetchObject();
+		$myRecord = json_encode($myRecord);//배열화
+		$myRecord = json_decode($myRecord,true);//배열화 완료
+		$Depth_record = $myRecord['Depth'];//깊이 값 가져오기
+		$stmt3 = $db->prepare($sql3);//sql3 start
+		$stmt3->bindParam("Depth", $Depth_record);
+		$stmt3->execute();
+		$myRank_temp = $stmt3->fetchObject();
+		$myRank_temp = json_encode($myRank_temp);//배열화
+		$myRank_temp = json_decode($myRank_temp,true);//배열화 완료
+		$myRank = $myRank_temp['count(*)']+1;//랭크값
+		$result = array('top5'=>$record1_5, 'myrank'=>$myRank, 'myrecord'=>$myRecord);//배열만들기
+		echo json_encode($result);
 	}
 	catch(PDOException $e){
 		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
