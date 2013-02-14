@@ -144,18 +144,37 @@ $app->get('/score_rank/:id',function($id){
 	}
 });
 
-//update_record
-$app->put('/upt_record/:id',function($id)use($app){
+//update_depth_record
+$app->put('/upt_dep_record/:id',function($id)use($app){
 	$request = $app->request();
 	$body = $request->getBody();
 	$record = json_decode($body);
-	$sql = "update ranking set Depth=:Depth, Score=:Score where id=:id";
+	$sql = "update ranking set Depth=:Depth where id=:id";
 	try{
 		$db = getConnection();
 		$stmt = $db->prepare($sql);
 		$stmt->bindParam("Depth", $record->Depth);
+		$stmt->bindParam("id", $id);
+		$stmt->execute();
+		$db = null;
+		echo json_encode($record);//or echo success data(for response ex.true)
+	}
+	catch(PDOException $e){
+		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
+	}
+});
+
+//update_score_record
+$app->put('/upt_score_record/:id',function($id)use($app){
+	$request = $app->request();
+	$body = $request->getBody();
+	$record = json_decode($body);
+	$sql = "update ranking set Score=:Score where id=:id";
+	try{
+		$db = getConnection();
+		$stmt = $db->prepare($sql);
 		$stmt->bindParam("Score", $record->Score);
-		$stmt->bindParam("id", $record->id);
+		$stmt->bindParam("id", $id);
 		$stmt->execute();
 		$db = null;
 		echo json_encode($record);//or echo success data(for response ex.true)
@@ -180,34 +199,6 @@ $app->delete('/del_rank:id', function($id){
 	catch(PDOException $e){
 		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
 	}
-});
-
-//db connection test
-$app->get('/test/:id', function($id){
-	$sql = "select * from ranking where id=:id";
-	try{
-		$db = getConnection();
-		$stmt = $db->prepare($sql);
-		$stmt->bindParam("id", $id);
-		$stmt->execute();
-		$myRecord = $stmt->fetchObject();
-		$db = null;
-		print_r($myRecord);
-		$myRecord = json_encode($myRecord);
-		$myRecord = json_decode($myRecord,true);
-		echo json_encode($myRecord);
-	}
-	catch(PDOException $e){
-		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
-	}
-});
-
-//post request testing
-$app->post('/post', function()use($app){
-	$request = $app->request();
-    $body = $request->getBody();
-    $input = json_decode($body);
-	echo json_encode($input); 
 });
 
 $app->run();
