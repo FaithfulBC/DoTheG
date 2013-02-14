@@ -15,7 +15,7 @@
 			$("#btn_submit").click(function(){
 				$.ajax({
 					type:'POST',
-					url:'index.php/post',
+					url:'index.php/add_user',
 					data:'{"id":"' + $("#id").val() + '", "name":"' + $('#name').val() + '", "Dev_num":"' + $('#Dev_num').val() + '"}',
 					success:function(callbackData){
 						alert(callbackData);
