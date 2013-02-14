@@ -1,40 +1,12 @@
 <?php
 require_once 'dbconn.php';//dbconnect function
 require 'Slim/Slim.php';//include slimframework
-
 \Slim\Slim::registerAutoloader();
 
 $app = new \Slim\Slim();
 
-$app->get('/is_user/:id','isUser');//is there ID(user) in database
-$app->put('/upt_latest_date/:id','updateLatestDate');//update lastest date
-$app->post('/add_user','addUser');//add User (Records are initialized 0)
-$app->get('/dep_rank/:id','getDepthRank');//dep_rank
-$app->get('/score_rank/:id','getScoreRank');//score_rank
-$app->put('/upt_record/:id','updateRecord');//update_record
-$app->delete('/del_rank:id', 'deleteRecord');//delete_record
-$app->get('/test/:id', 'test_f');//db connection test
-
-$app->run();
-function test_f($id){
-	$sql = "select * from ranking where id=:id";
-	try{
-		$db = getConnection();
-		$stmt = $db->prepare($sql);
-		$stmt->bindParam("id", $id);
-		$stmt->execute();
-		$myRecord = $stmt->fetchObject();
-		$db = null;
-		print_r($myRecord);
-		$myRecord = json_encode($myRecord);
-		$myRecord = json_decode($myRecord,true);
-		echo json_encode($myRecord);
-	}
-	catch(PDOException $e){
-		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
-	}
-}
-function isUser($id){//complete
+//is there ID(user) in database
+$app->get('/is_user/:id',function($id){
 	$sql = "select count(*) from ranking where id=:id";
 	$sql1 = "select * from ranking where id=:id";
 	try{
@@ -62,8 +34,10 @@ function isUser($id){//complete
 	catch(PDOException $e){
 		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
 	}
-}
-function updateLatestDate($id){//isUser 요청 완료 후  updateLatestDate 요청하기
+});
+
+//update lastest date
+$app->put('/upt_latest_date/:id',function($id){//isUser 요청 완료 후  updateLatestDate 요청하기
 	$sql = "update ranking set latest_date=now() where id=:id";
 	$sql2 = "select latest_date from ranking where id=:id";
 	try{
@@ -81,8 +55,10 @@ function updateLatestDate($id){//isUser 요청 완료 후  updateLatestDate 요�
 	catch(PDOException $e){
 		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
 	}
-}
-function addUser(){
+});
+
+//add User (Records are initialized 0)
+$app->post('/add_user',function()use($app){
 	$request = $app->request();
 	$body = $request->getBody();
 	$record = json_decode($body);
@@ -100,8 +76,10 @@ function addUser(){
 	catch(PDOException $e){
 		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
 	}
-}
-function getDepthRank($id){
+});
+
+//dep_rank
+$app->get('/dep_rank/:id',function($id){
 	$sql1 = "select * from ranking order by Depth desc limit 5";
 	$sql2 = "select * from ranking where id=:id";
 	$sql3 = "select count(*) from ranking where Depth>:Depth";
@@ -131,8 +109,10 @@ function getDepthRank($id){
 	catch(PDOException $e){
 		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
 	}
-}
-function getScoreRank($id){
+});
+
+//score_rank
+$app->get('/score_rank/:id',function($id){
 	$sql1 = "select * from ranking order by Score desc limit 5";
 	$sql2 = "select * from ranking where id=:id";
 	$sql3 = "select count(*) from ranking where Score>:Score";
@@ -162,8 +142,10 @@ function getScoreRank($id){
 	catch(PDOException $e){
 		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
 	}
-}
-function updateRecord($id){
+});
+
+//update_record
+$app->put('/upt_record/:id',function($id)use($app){
 	$request = $app->request();
 	$body = $request->getBody();
 	$record = json_decode($body);
@@ -181,8 +163,10 @@ function updateRecord($id){
 	catch(PDOException $e){
 		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
 	}
-}
-function deleteRecord($id){
+});
+
+//delete_record
+$app->delete('/del_rank:id', function($id){
 	$sql = "delete from ranking where id=:id";
 	try{
 		$db = getConnection();
@@ -196,5 +180,37 @@ function deleteRecord($id){
 	catch(PDOException $e){
 		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
 	}
-}
+});
+
+//db connection test
+$app->get('/test/:id', function($id){
+	$sql = "select * from ranking where id=:id";
+	try{
+		$db = getConnection();
+		$stmt = $db->prepare($sql);
+		$stmt->bindParam("id", $id);
+		$stmt->execute();
+		$myRecord = $stmt->fetchObject();
+		$db = null;
+		print_r($myRecord);
+		$myRecord = json_encode($myRecord);
+		$myRecord = json_decode($myRecord,true);
+		echo json_encode($myRecord);
+	}
+	catch(PDOException $e){
+		echo '{"error":{"text":'. $e->getMessage() .'}}';//throw error message(maybe json type)
+	}
+});
+
+//post request testing
+$app->post('/post', function()use($app){
+	$request = $app->request();
+    $body = $request->getBody();
+    $input = json_decode($body);
+	echo json_encode($input); 
+});
+
+$app->run();
+
+
 ?>
