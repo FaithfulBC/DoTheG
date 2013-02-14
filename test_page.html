@@ -1,0 +1,66 @@
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<title>
+		</title>
+	</head>
+	<body>
+		<span>post 전송 test</span>
+		<div><input type="text" id="id" size="15" /></div>
+		<div><input type="text" id="name" size="15" /></div>
+		<div><input type="text" id="Dev_num" size="15" /></div>
+		<input type="button" value="전송" id="btn_submit"><br/><br/>
+		
+		<span>put 전송 test(depth 업데이트)</span>
+		<div><input type="text" id="id1" size="15" /></div>
+		<div><input type="text" id="Depth" size="15" /></div>
+		<input type="button" value="전송" id="btn_submit1"><br/><br/>
+		
+		<span>put 전송 test(score 업데이트)</span>
+		<div><input type="text" id="id2" size="15" /></div>
+		<div><input type="text" id="Score" size="15" /></div>
+		<input type="button" value="전송" id="btn_submit2">
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+		<script type="text/javascript">
+			$("#btn_submit").click(function(){//add user ajax request
+				$.ajax({
+					type:'POST',
+					url:'index.php/add_user',
+					data:'{"id":"' + $("#id").val() + '", "name":"' + $('#name').val() + '", "Dev_num":"' + $('#Dev_num').val() + '"}',
+					success:function(callbackData){
+						alert(callbackData);
+					},
+					error: function(jqXHR, textStatus, errorThrown){
+						alert('ajax test error: ' + textStatus + ',' + jqXHR + ',' + errorThrown);
+					}
+				});
+			});
+			$("#btn_submit1").click(function(){//update depth requset
+				$.ajax({
+					type:'PUT',
+					url:'index.php/upt_dep_record/'+$('#id1').val(),
+					data:'{"Depth":"' + $('#Depth').val() + '"}',
+					success:function(callbackData){
+						alert(callbackData);
+					},
+					error: function(jqXHR, textStatus, errorThrown){
+						alert('ajax test error: ' + textStatus + ',' + jqXHR + ',' + errorThrown);
+					}
+				});
+			});
+			$("#btn_submit2").click(function(){//update score request
+				$.ajax({
+					type:'PUT',
+					url:'index.php/upt_score_record/'+$('#id2').val(),
+					data:'{"Score":"' + $('#Score').val() + '"}',
+					success:function(callbackData){
+						alert(callbackData);
+					},
+					error: function(jqXHR, textStatus, errorThrown){
+						alert('ajax test error: ' + textStatus + ',' + jqXHR + ',' + errorThrown);
+					}
+				});
+			});
+		</script>
+	</body>
+</html>
