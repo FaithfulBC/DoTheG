@@ -185,7 +185,7 @@ $app->put('/upt_score_record/:id',function($id)use($app){
 });
 
 //delete_record
-$app->delete('/del_rank:id', function($id){
+$app->delete('/del_rank/:id', function($id){
 	$sql = "delete from ranking where id=:id";
 	try{
 		$db = getConnection();
